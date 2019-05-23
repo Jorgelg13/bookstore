@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom';
 import Spinner from '../Layout/Spinner';
 import PropTypes from 'prop-types';
 
-const Suscriptores = ({suscriptores, firestore, history}) => {
+const Suscriptores = ({suscriptores, firestore}) => {
     if(!suscriptores) return <Spinner></Spinner>;
 
     //eliminar suscriptores
