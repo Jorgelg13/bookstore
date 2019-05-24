@@ -46,10 +46,10 @@ const Suscriptores = ({suscriptores, firestore}) => {
                         <td>
                             <Link 
                               to ={`/suscriptores/mostrar/${suscriptor.id}`} 
-                              className="btn btn-success btn-block"><i className="fas fa-angle-double-right"></i>
+                              className="btn btn-success"><i className="fas fa-angle-double-right"></i>
                               Mas Informacion
                             </Link>
-                            <button type="button" className="btn btn-danger btn-block" onClick={ () => eliminarSuscriptor(suscriptor.id)}>
+                            <button type="button" className="btn btn-danger ml-2" onClick={ () => eliminarSuscriptor(suscriptor.id)}>
                               <i className="fas fa-trash-alt"></i>Eliminar
                             </button>
                         </td>
