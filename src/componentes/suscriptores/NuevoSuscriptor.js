@@ -35,9 +35,10 @@ class NuevoSuscriptor extends Component {
         return ( 
             <div className="row ">
                 <div className="col-12 mb-4">
-                    <Link to={'/suscriptores'} className="btn btn-secondary"/>
-                    <i className="fas fa-arrow-circle-left"></i>
-                    Volver al listado
+                    <Link to={'/suscriptores'} className="btn btn-secondary">
+                        <i className="fas fa-arrow-circle-left"></i>
+                         Volver al listado
+                    </Link>
                 </div>
                 <div className="col-12 ">
                     <h2>

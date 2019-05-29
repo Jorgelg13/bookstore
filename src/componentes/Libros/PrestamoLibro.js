@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { firestoreConnect } from 'react-redux-firebase'
 import { Link } from 'react-router-dom';
 import Spinner from '../Layout/Spinner';
+import FichaSuscriptor from '../suscriptores/FichaSuscriptor';
 
 class PrestamoLibro extends Component {
     state = { 
@@ -24,18 +25,19 @@ class PrestamoLibro extends Component {
         const consulta = coleccion.where("codigo", "==",busqueda).get();
 
         //leer los resultados
-        consulta.then(resultado =>{
-            if(!resultado.empty){
+        consulta.then(resultado => {
+            if(resultado.empty){
                this.setState({
-                noResultados :false,
+                noResultados :true,
                 resultado:{}
                })
 
             } else{
                 const datos = resultado.docs[0];
+                console.log(datos.data());
                 this.setState({
                     resultado: datos.data(),
-                    noResultados: false
+                    noResultados: false,
                 })
             }
 
@@ -50,11 +52,47 @@ class PrestamoLibro extends Component {
         })
     }
 
+    //almacena los datos del alumno para solicitar el libro
+    solicitarPrestamo =() =>{
+        const suscriptor = this.state.resultado;
+        //fecha de alta
+        suscriptor.fecha_solicitud = new Date().toLocaleDateString();
+        //obtener el libro
+        const libroActualizado = this.props.libro;
+        //agregar el suscriptor del libro
+        libroActualizado.prestados.push(suscriptor);
+        //obtener firestore y history de props
+        const {firestore,history,libro} = this.props
+        //almacenar en firestore
+        firestore.update({
+            collection: 'libros',
+            doc : libro.id
+        }, libroActualizado)
+        .then(history.push('/'))
+    }
+
     render() {
         //extraer el libro
         const {libro} = this.props;
 
         if(!libro) return <Spinner/>
+
+        //extraer los daots del alumno
+        const {noResultados, resultado} = this.state;
+        let fichaAlumno, btnSolicitar;
+
+        if(resultado.nombre){
+            fichaAlumno = <FichaSuscriptor
+                            alumno ={resultado}
+                            />
+            btnSolicitar = <button type="button" 
+                            className="btn btn-success" 
+                            onClick={this.solicitarPrestamo}
+                            >Solicitar Prestamo</button>
+        } else{
+            fichaAlumno = null;
+            btnSolicitar = null;
+        }
         
         return (  
            <div className="row">
@@ -71,7 +109,7 @@ class PrestamoLibro extends Component {
                 </h2>
                 <div className="row justify-content-center">
                     <div className="col-md-8">
-                        <form onSubmit ={this.buscarAlumno}>
+                        <form onSubmit ={this.buscarAlumno} className="mb-4">
                             <legend className="color-primary text-center">
                                 Buscar suscriptor por su codigo
                             </legend>
@@ -84,6 +122,10 @@ class PrestamoLibro extends Component {
                             </div>
                             <input type="submit" value="Buscar Alumno" className="btn btn-success"/>
                         </form>
+                        {/*Muestra la ficha del alumno y el boton para solicitar el prestamo*/}
+                        {fichaAlumno}
+                        <br/>
+                        {btnSolicitar}
                     </div>
                 </div>
              </div>
